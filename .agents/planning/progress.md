@@ -422,9 +422,12 @@
   - 确认本机未安装 GitHub CLI，无法直接使用 `gh`。
   - 检查现有 Docker workflows，发现稳定版 workflow 硬编码官方 Docker Hub 镜像名，alpha workflow 也依赖 Docker Hub secrets。
   - 新增 GHCR 专用 workflow：`.github/workflows/transnova-docker.yml`，在 `tokennova` 分支 push 或手动触发时构建并推送 `ghcr.io/wenlan-coder/new-api`。
+  - 提交 GHCR 专用 workflow：`198d0dae ci: publish transnova docker image to ghcr`。
+  - 成功推送 `198d0dae` 到 `origin/tokennova`。
+  - GitHub Actions run `27557504911` 执行成功。
+  - GHCR 镜像发布成功：`ghcr.io/wenlan-coder/new-api:v1.0.0-rc.11-transnova.1` 和 `ghcr.io/wenlan-coder/new-api:latest`。
+  - 通过 `docker buildx imagetools inspect ghcr.io/wenlan-coder/new-api:v1.0.0-rc.11-transnova.1` 验证镜像存在，index digest 为 `sha256:7b0f2761608e739cfb2c4e7346963343f3592ac0b8b3cd2387ccf8c2c6eb227f`。
 - 待执行：
-  - 提交并推送 GHCR workflow。
-  - 等待 GitHub Actions 云端构建并发布 GHCR 镜像。
   - 如仓库权限允许，后续再补推 `v1.0.0-rc.11-transnova.1` tag。
 
 ## 当前 git status --short（2026-06-15 发布前检查后）
