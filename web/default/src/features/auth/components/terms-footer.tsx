@@ -39,8 +39,9 @@ export function TermsFooter({
 
   const hasUserAgreement = Boolean(status?.user_agreement_enabled)
   const hasPrivacyPolicy = Boolean(status?.privacy_policy_enabled)
+  const hasTermsOfService = Boolean(status?.terms_of_service_enabled)
 
-  if (!hasUserAgreement && !hasPrivacyPolicy) {
+  if (!hasUserAgreement && !hasPrivacyPolicy && !hasTermsOfService) {
     return null
   }
 
@@ -52,40 +53,31 @@ export function TermsFooter({
     label: 'Privacy Policy',
     href: '/privacy-policy',
   }
+  const termsLink = {
+    label: 'Terms of Service',
+    href: '/terms-of-service',
+  }
 
-  const activeLinks =
-    hasUserAgreement || hasPrivacyPolicy
-      ? ([
-          hasUserAgreement ? agreementLink : null,
-          hasPrivacyPolicy ? privacyLink : null,
-        ].filter(Boolean) as Array<{ label: string; href: string }>)
-      : [agreementLink, privacyLink]
-
-  const [firstLink, secondLink] = activeLinks
+  const activeLinks = [
+    hasUserAgreement ? agreementLink : null,
+    hasPrivacyPolicy ? privacyLink : null,
+    hasTermsOfService ? termsLink : null,
+  ].filter(Boolean) as Array<{ label: string; href: string }>
 
   return (
     <p className={cn('text-muted-foreground text-center text-xs', className)}>
-      {text}{' '}
-      {firstLink && (
-        <a
-          href={firstLink.href}
-          className='hover:text-primary underline underline-offset-4'
-        >
-          {firstLink.label}
-        </a>
-      )}
-      {secondLink && (
-        <>
-          {' '}
-          {t('and')}{' '}
+      {t(text)}{' '}
+      {activeLinks.map((link, index) => (
+        <span key={link.href}>
+          {index > 0 && ` ${t('and')} `}
           <a
-            href={secondLink.href}
+            href={link.href}
             className='hover:text-primary underline underline-offset-4'
           >
-            {secondLink.label}
+            {t(link.label)}
           </a>
-        </>
-      )}
+        </span>
+      ))}
       .
     </p>
   )

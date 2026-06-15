@@ -40,6 +40,7 @@ const SITE_SECTIONS = [
             frontend: settings['theme.frontend'] as 'default' | 'classic',
           },
           SystemName: settings.SystemName,
+          SystemNameEn: settings.SystemNameEn,
           Logo: settings.Logo,
           Footer: settings.Footer,
           About: settings.About,
@@ -47,7 +48,11 @@ const SITE_SECTIONS = [
           ServerAddress: settings.ServerAddress,
           legal: {
             user_agreement: settings['legal.user_agreement'],
+            user_agreement_en: settings['legal.user_agreement_en'],
             privacy_policy: settings['legal.privacy_policy'],
+            privacy_policy_en: settings['legal.privacy_policy_en'],
+            terms_of_service: settings['legal.terms_of_service'],
+            terms_of_service_en: settings['legal.terms_of_service_en'],
           },
         }}
       />

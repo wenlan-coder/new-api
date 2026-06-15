@@ -75,7 +75,7 @@ function FooterLinkItem(props: { link: FooterLink }) {
   )
 }
 
-// Renders User Agreement / Privacy Policy links inline with the parent's
+// Renders legal document links inline with the parent's
 // copyright row when either is configured in System Settings → Site. Emits
 // fragmented siblings so the parent flex container's gap controls spacing.
 function LegalLinks(props: { leadingSeparator?: boolean }) {
@@ -94,6 +94,13 @@ function LegalLinks(props: { leadingSeparator?: boolean }) {
       key: 'privacy-policy',
       label: t('Privacy Policy'),
       href: '/privacy-policy',
+    })
+  }
+  if (status?.terms_of_service_enabled) {
+    items.push({
+      key: 'terms-of-service',
+      label: t('Terms of Service'),
+      href: '/terms-of-service',
     })
   }
   if (items.length === 0) {

@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Markdown } from '@/components/ui/markdown'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PublicLayout } from '@/components/layout'
+import { normalizeInterfaceLanguage } from '@/i18n/languages'
 import type { LegalDocumentResponse } from './types'
 
 type LegalDocumentProps = {
@@ -52,9 +53,10 @@ export function LegalDocument({
   fetchDocument,
   emptyMessage,
 }: LegalDocumentProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = normalizeInterfaceLanguage(i18n.language)
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey],
+    queryKey: [queryKey, language],
     queryFn: fetchDocument,
     staleTime: 10 * 60 * 1000,
   })

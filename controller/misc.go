@@ -47,6 +47,11 @@ func GetStatus(c *gin.Context) {
 
 	passkeySetting := system_setting.GetPasskeySettings()
 	legalSetting := system_setting.GetLegalSettings()
+	generalSetting := operation_setting.GetGeneralSetting()
+	groupMonitorLink := generalSetting.GroupMonitorLink
+	if groupMonitorLink == "" {
+		groupMonitorLink = common.OptionMap["general_setting.group_monitor_link"]
+	}
 
 	data := gin.H{
 		"version":                     common.Version,
@@ -63,6 +68,7 @@ func GetStatus(c *gin.Context) {
 		"telegram_bot_name":           common.TelegramBotName,
 		"theme":                       system_setting.GetThemeSettings().Frontend,
 		"system_name":                 common.SystemName,
+		"system_name_en":              common.SystemNameEn,
 		"logo":                        common.Logo,
 		"footer_html":                 common.Footer,
 		"wechat_qrcode":               common.WeChatAccountQRCodeImageURL,
@@ -70,7 +76,8 @@ func GetStatus(c *gin.Context) {
 		"server_address":              system_setting.ServerAddress,
 		"turnstile_check":             common.TurnstileCheckEnabled,
 		"turnstile_site_key":          common.TurnstileSiteKey,
-		"docs_link":                   operation_setting.GetGeneralSetting().DocsLink,
+		"docs_link":                   generalSetting.DocsLink,
+		"group_monitor_link":          groupMonitorLink,
 		"quota_per_unit":              common.QuotaPerUnit,
 		// 兼容旧前端：保留 display_in_currency，同时提供新的 quota_display_type
 		"display_in_currency":           operation_setting.IsCurrencyDisplay(),
@@ -117,8 +124,9 @@ func GetStatus(c *gin.Context) {
 		"passkey_user_verification":   passkeySetting.UserVerification,
 		"passkey_attachment":          passkeySetting.AttachmentPreference,
 		"setup":                       constant.Setup,
-		"user_agreement_enabled":      legalSetting.UserAgreement != "",
-		"privacy_policy_enabled":      legalSetting.PrivacyPolicy != "",
+		"user_agreement_enabled":      legalSetting.UserAgreement != "" || legalSetting.UserAgreementEn != "",
+		"privacy_policy_enabled":      legalSetting.PrivacyPolicy != "" || legalSetting.PrivacyPolicyEn != "",
+		"terms_of_service_enabled":    legalSetting.TermsOfService != "" || legalSetting.TermsOfServiceEn != "",
 		"checkin_enabled":             operation_setting.GetCheckinSetting().Enabled,
 	}
 
@@ -192,21 +200,47 @@ func GetAbout(c *gin.Context) {
 }
 
 func GetUserAgreement(c *gin.Context) {
+	legalSetting := system_setting.GetLegalSettings()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    system_setting.GetLegalSettings().UserAgreement,
+		"data":    localizedLegalContent(c, legalSetting.UserAgreement, legalSetting.UserAgreementEn),
 	})
 	return
 }
 
 func GetPrivacyPolicy(c *gin.Context) {
+	legalSetting := system_setting.GetLegalSettings()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    system_setting.GetLegalSettings().PrivacyPolicy,
+		"data":    localizedLegalContent(c, legalSetting.PrivacyPolicy, legalSetting.PrivacyPolicyEn),
 	})
 	return
+}
+
+func GetTermsOfService(c *gin.Context) {
+	legalSetting := system_setting.GetLegalSettings()
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"data":    localizedLegalContent(c, legalSetting.TermsOfService, legalSetting.TermsOfServiceEn),
+	})
+	return
+}
+
+func localizedLegalContent(c *gin.Context, defaultContent string, englishContent string) string {
+	lang := strings.ToLower(strings.TrimSpace(c.GetHeader("Accept-Language")))
+	if strings.HasPrefix(lang, "en") {
+		if englishContent != "" {
+			return englishContent
+		}
+		return defaultContent
+	}
+	if defaultContent != "" {
+		return defaultContent
+	}
+	return englishContent
 }
 
 func GetMidjourney(c *gin.Context) {

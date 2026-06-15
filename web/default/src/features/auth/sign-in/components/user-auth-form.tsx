@@ -89,7 +89,9 @@ export function UserAuthForm({
 
   const hasUserAgreement = Boolean(status?.user_agreement_enabled)
   const hasPrivacyPolicy = Boolean(status?.privacy_policy_enabled)
-  const requiresLegalConsent = hasUserAgreement || hasPrivacyPolicy
+  const hasTermsOfService = Boolean(status?.terms_of_service_enabled)
+  const requiresLegalConsent =
+    hasUserAgreement || hasPrivacyPolicy || hasTermsOfService
   const passkeyButtonDisabled =
     isPasskeyLoading ||
     !passkeySupported ||

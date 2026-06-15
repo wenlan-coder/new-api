@@ -38,6 +38,7 @@ import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
 import './i18n/config'
+import { normalizeInterfaceLanguage } from './i18n/languages'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles
@@ -124,13 +125,23 @@ const rootElement = document.getElementById('root')!
       ) as HTMLMetaElement | null
       if (metaTitle) metaTitle.setAttribute('content', name)
     }
+    const pickSystemName = (status: Record<string, unknown>) => {
+      const defaultName =
+        typeof status.system_name === 'string' ? status.system_name : ''
+      const englishName =
+        typeof status.system_name_en === 'string' ? status.system_name_en : ''
+      return normalizeInterfaceLanguage(i18next.language) === 'en'
+        ? englishName || defaultName
+        : defaultName
+    }
     // Cache-first
     try {
       const saved = localStorage.getItem('status')
       if (saved) {
-        const s = JSON.parse(saved)
-        if (s?.system_name) apply(s.system_name)
-        if (s?.logo) applyFaviconToDom(s.logo)
+        const s = JSON.parse(saved) as Record<string, unknown>
+        const name = pickSystemName(s)
+        if (name) apply(name)
+        if (typeof s.logo === 'string') applyFaviconToDom(s.logo)
       }
     } catch {
       /* empty */
@@ -138,8 +149,9 @@ const rootElement = document.getElementById('root')!
     // Background refresh
     getStatus()
       .then((s) => {
-        if (s?.system_name) {
-          apply(s.system_name as string)
+        const name = pickSystemName(s)
+        if (name) {
+          apply(name)
           try {
             localStorage.setItem('status', JSON.stringify(s))
           } catch {

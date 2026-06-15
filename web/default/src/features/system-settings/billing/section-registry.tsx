@@ -64,6 +64,8 @@ const BILLING_SECTIONS = [
           TopUpLink: settings.TopUpLink,
           general_setting: {
             docs_link: settings['general_setting.docs_link'],
+            group_monitor_link:
+              settings['general_setting.group_monitor_link'],
           },
           quota_setting: {
             enable_free_model_pre_consume:

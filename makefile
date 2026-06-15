@@ -4,13 +4,14 @@ BACKEND_DIR = .
 DEV_FRONTEND_DEFAULT_PORT ?= 5173
 DEV_FRONTEND_CLASSIC_PORT ?= 5174
 DEV_COMPOSE_FILE = docker-compose.dev.yml
-DEV_POSTGRES_SERVICE = postgres
+DEV_MYSQL_SERVICE = mysql
 DEV_BACKEND_SERVICE = new-api
-DEV_POSTGRES_DB = new-api
-DEV_POSTGRES_USER = root
+DEV_MYSQL_DB = new-api
+DEV_MYSQL_USER = root
+DEV_MYSQL_PASSWORD = 123456
 DEV_SQLITE_PATH ?= one-api.db
 
-.PHONY: all build-frontend build-frontend-classic build-all-frontends start-backend dev dev-api dev-api-rebuild dev-web dev-web-classic reset-setup
+.PHONY: all build-frontend build-frontend-classic build-all-frontends start-backend dev dev-api dev-api-rebuild dev-db dev-web dev-web-classic reset-setup
 
 all: build-all-frontends start-backend
 
@@ -37,6 +38,10 @@ dev-api:
 dev-api-rebuild:
 	@echo "Rebuilding and starting backend service (docker)..."
 	@docker compose -f $(DEV_COMPOSE_FILE) up -d --build $(DEV_BACKEND_SERVICE)
+
+dev-db:
+	@echo "Starting local MySQL and Redis (docker)..."
+	@docker compose -f $(DEV_COMPOSE_FILE) up -d $(DEV_MYSQL_SERVICE) redis
 
 dev-web:
 	@echo "Starting both frontend dev servers..."
@@ -73,13 +78,11 @@ dev: dev-api dev-web
 
 reset-setup:
 	@echo "Resetting local setup wizard state..."
-	@if docker compose -f $(DEV_COMPOSE_FILE) ps --services --status running | grep -qx "$(DEV_POSTGRES_SERVICE)"; then \
-		echo "Detected running docker dev PostgreSQL. Removing setup record and root users..."; \
-		docker compose -f $(DEV_COMPOSE_FILE) exec -T $(DEV_POSTGRES_SERVICE) \
-			psql -U $(DEV_POSTGRES_USER) -d $(DEV_POSTGRES_DB) \
-			-c 'DELETE FROM setups;' \
-			-c 'DELETE FROM users WHERE role = 100;' \
-			-c "DELETE FROM options WHERE key IN ('SelfUseModeEnabled', 'DemoSiteEnabled');"; \
+	@if docker compose -f $(DEV_COMPOSE_FILE) ps --services --status running | grep -qx "$(DEV_MYSQL_SERVICE)"; then \
+		echo "Detected running docker dev MySQL. Removing setup record and root users..."; \
+		docker compose -f $(DEV_COMPOSE_FILE) exec -T $(DEV_MYSQL_SERVICE) \
+			mysql -u$(DEV_MYSQL_USER) -p$(DEV_MYSQL_PASSWORD) $(DEV_MYSQL_DB) \
+			-e "DELETE FROM setups; DELETE FROM users WHERE role = 100; DELETE FROM options WHERE \`key\` IN ('SelfUseModeEnabled', 'DemoSiteEnabled');"; \
 		echo "Restarting docker dev backend so setup status is recalculated..."; \
 		docker compose -f $(DEV_COMPOSE_FILE) restart $(DEV_BACKEND_SERVICE); \
 	elif db_path="$${SQLITE_PATH:-$(DEV_SQLITE_PATH)}"; db_path="$${db_path%%\?*}"; [ -f "$$db_path" ]; then \
@@ -90,7 +93,7 @@ reset-setup:
 			"DELETE FROM setups; DELETE FROM users WHERE role = 100; DELETE FROM options WHERE key IN ('SelfUseModeEnabled', 'DemoSiteEnabled');"; \
 		echo "SQLite setup state reset. Restart the local backend process before testing the setup wizard."; \
 	else \
-		echo "No running docker dev PostgreSQL or local SQLite database found."; \
-		echo "Start the dev stack with 'make dev-api', or set SQLITE_PATH/DEV_SQLITE_PATH to your local SQLite database."; \
+		echo "No running docker dev MySQL or local SQLite database found."; \
+		echo "Start the dev database with 'make dev-db', or set SQLITE_PATH/DEV_SQLITE_PATH to your local SQLite database."; \
 		exit 1; \
 	fi

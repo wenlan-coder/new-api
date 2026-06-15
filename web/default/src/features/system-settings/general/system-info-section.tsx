@@ -56,6 +56,7 @@ const _systemInfoSchema = z.object({
     frontend: z.enum(['default', 'classic']),
   }),
   SystemName: z.string().min(1),
+  SystemNameEn: z.string().optional(),
   ServerAddress: z.string().optional(),
   Logo: z.string().url().optional().or(z.literal('')),
   Footer: z.string().optional(),
@@ -63,7 +64,11 @@ const _systemInfoSchema = z.object({
   HomePageContent: z.string().optional(),
   legal: z.object({
     user_agreement: z.string().optional(),
+    user_agreement_en: z.string().optional(),
     privacy_policy: z.string().optional(),
+    privacy_policy_en: z.string().optional(),
+    terms_of_service: z.string().optional(),
+    terms_of_service_en: z.string().optional(),
   }),
 })
 
@@ -88,6 +93,7 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
         defaultValues.theme?.frontend === 'classic' ? 'classic' : 'default',
     },
     SystemName: normalizeValue(defaultValues.SystemName),
+    SystemNameEn: normalizeValue(defaultValues.SystemNameEn),
     ServerAddress: normalizeValue(defaultValues.ServerAddress),
     Logo: normalizeValue(defaultValues.Logo),
     Footer: normalizeValue(defaultValues.Footer),
@@ -95,7 +101,11 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
     HomePageContent: normalizeValue(defaultValues.HomePageContent),
     legal: {
       user_agreement: normalizeValue(defaultValues.legal?.user_agreement),
+      user_agreement_en: normalizeValue(defaultValues.legal?.user_agreement_en),
       privacy_policy: normalizeValue(defaultValues.legal?.privacy_policy),
+      privacy_policy_en: normalizeValue(defaultValues.legal?.privacy_policy_en),
+      terms_of_service: normalizeValue(defaultValues.legal?.terms_of_service),
+      terms_of_service_en: normalizeValue(defaultValues.legal?.terms_of_service_en),
     },
   }
 
@@ -106,6 +116,7 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
     SystemName: z.string().min(1, {
       error: () => t('System name is required'),
     }),
+    SystemNameEn: z.string().optional(),
     ServerAddress: z.string().optional(),
     Logo: z.string().url().optional().or(z.literal('')),
     Footer: z.string().optional(),
@@ -113,7 +124,11 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
     HomePageContent: z.string().optional(),
     legal: z.object({
       user_agreement: z.string().optional(),
+      user_agreement_en: z.string().optional(),
       privacy_policy: z.string().optional(),
+      privacy_policy_en: z.string().optional(),
+      terms_of_service: z.string().optional(),
+      terms_of_service_en: z.string().optional(),
     }),
   })
 
@@ -205,12 +220,33 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
                 name='SystemName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('System Name')}</FormLabel>
+                    <FormLabel>{t('Chinese System Name')}</FormLabel>
                     <FormControl>
                       <Input placeholder={t('New API')} {...field} />
                     </FormControl>
                     <FormDescription>
-                      {t('The name displayed across the application')}
+                      {t(
+                        'Displayed when the interface language is Chinese, and used as the default fallback name'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='SystemNameEn'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('English System Name')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={t('New API')} {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        'Displayed when the interface language is English. Leave empty to use the Chinese system name.'
+                      )}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -356,6 +392,31 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
 
               <FormField
                 control={form.control}
+                name='legal.user_agreement_en'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('User Agreement (English)')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t(
+                          'Provide Markdown, HTML, or an external URL for the English user agreement'
+                        )}
+                        rows={6}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        'Leave empty to use the Chinese/default user agreement when English is selected.'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name='legal.privacy_policy'
                 render={({ field }) => (
                   <FormItem>
@@ -372,6 +433,81 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
                     <FormDescription>
                       {t(
                         'Leave empty to disable the privacy policy requirement. Supports Markdown, HTML, or a full URL to redirect users.'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='legal.privacy_policy_en'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Privacy Policy (English)')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t(
+                          'Provide Markdown, HTML, or an external URL for the English privacy policy'
+                        )}
+                        rows={6}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        'Leave empty to use the Chinese/default privacy policy when English is selected.'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='legal.terms_of_service'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Terms of Service')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t(
+                          'Provide Markdown, HTML, or an external URL for the terms of service'
+                        )}
+                        rows={6}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        'Leave empty to disable the terms of service requirement. Supports Markdown, HTML, or a full URL to redirect users.'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='legal.terms_of_service_en'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Terms of Service (English)')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t(
+                          'Provide Markdown, HTML, or an external URL for the English terms of service'
+                        )}
+                        rows={6}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        'Leave empty to use the Chinese/default terms of service when English is selected.'
                       )}
                     </FormDescription>
                     <FormMessage />

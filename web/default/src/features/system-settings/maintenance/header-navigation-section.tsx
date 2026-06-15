@@ -54,6 +54,7 @@ const headerNavSchema = z.object({
   rankingsEnabled: z.boolean(),
   rankingsRequireAuth: z.boolean(),
   docs: z.boolean(),
+  groupMonitor: z.boolean(),
   about: z.boolean(),
 })
 
@@ -89,6 +90,10 @@ const toFormValues = (config: HeaderNavModulesConfig): HeaderNavFormValues => ({
       : Boolean(config.rankings.requireAuth),
   docs:
     config.docs === undefined ? HEADER_NAV_DEFAULT.docs : Boolean(config.docs),
+  groupMonitor:
+    config.groupMonitor === undefined
+      ? HEADER_NAV_DEFAULT.groupMonitor
+      : Boolean(config.groupMonitor),
   about:
     config.about === undefined
       ? HEADER_NAV_DEFAULT.about
@@ -118,6 +123,7 @@ export function HeaderNavigationSection({
       home: values.home,
       console: values.console,
       docs: values.docs,
+      groupMonitor: values.groupMonitor,
       about: values.about,
       pricing: {
         ...(config.pricing ?? HEADER_NAV_DEFAULT.pricing),
@@ -165,6 +171,11 @@ export function HeaderNavigationSection({
       key: 'docs',
       title: t('Docs'),
       description: t('Documentation or external knowledge base.'),
+    },
+    {
+      key: 'groupMonitor',
+      title: t('Group Monitor'),
+      description: t('Grouped monitoring dashboard link.'),
     },
     {
       key: 'about',

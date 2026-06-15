@@ -16,22 +16,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { useTranslation } from 'react-i18next'
+import { getTermsOfService } from './api'
+import { LegalDocument } from './legal-document'
 
-export const INTERFACE_LANGUAGE_OPTIONS = [
-  { code: 'zh', label: '简体中文' },
-  { code: 'en', label: 'English' },
-] as const
-
-export type InterfaceLanguageCode =
-  (typeof INTERFACE_LANGUAGE_OPTIONS)[number]['code']
-
-export function normalizeInterfaceLanguage(value?: string | null): string {
-  if (!value) return 'en'
-
-  const normalized = value.trim().replace(/_/g, '-').toLowerCase()
-  if (normalized.startsWith('zh')) return 'zh'
-
-  return INTERFACE_LANGUAGE_OPTIONS.some((lang) => lang.code === normalized)
-    ? normalized
-    : 'en'
+export function TermsOfService() {
+  const { t } = useTranslation()
+  return (
+    <LegalDocument
+      title={t('Terms of Service')}
+      queryKey='terms-of-service'
+      fetchDocument={getTermsOfService}
+      emptyMessage={t(
+        'The administrator has not configured terms of service yet.'
+      )}
+    />
+  )
 }

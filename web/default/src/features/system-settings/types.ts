@@ -60,13 +60,18 @@ export type SiteSettings = {
   'theme.frontend': string
   Notice: string
   SystemName: string
+  SystemNameEn: string
   Logo: string
   Footer: string
   About: string
   HomePageContent: string
   ServerAddress: string
   'legal.user_agreement': string
+  'legal.user_agreement_en': string
   'legal.privacy_policy': string
+  'legal.privacy_policy_en': string
+  'legal.terms_of_service': string
+  'legal.terms_of_service_en': string
   HeaderNavModules: string
   SidebarModulesAdmin: string
 }
@@ -191,6 +196,7 @@ export type BillingSettings = {
   QuotaForInvitee: number
   TopUpLink: string
   'general_setting.docs_link': string
+  'general_setting.group_monitor_link': string
   'quota_setting.enable_free_model_pre_consume': boolean
   QuotaPerUnit: number
   USDExchangeRate: number

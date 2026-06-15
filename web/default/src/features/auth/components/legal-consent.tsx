@@ -38,8 +38,21 @@ export function LegalConsent({
   const { t } = useTranslation()
   const hasUserAgreement = Boolean(status?.user_agreement_enabled)
   const hasPrivacyPolicy = Boolean(status?.privacy_policy_enabled)
+  const hasTermsOfService = Boolean(status?.terms_of_service_enabled)
 
-  if (!hasUserAgreement && !hasPrivacyPolicy) {
+  const links = [
+    hasUserAgreement
+      ? { label: t('User Agreement'), href: '/user-agreement' }
+      : null,
+    hasPrivacyPolicy
+      ? { label: t('Privacy Policy'), href: '/privacy-policy' }
+      : null,
+    hasTermsOfService
+      ? { label: t('Terms of Service'), href: '/terms-of-service' }
+      : null,
+  ].filter(Boolean) as Array<{ label: string; href: string }>
+
+  if (links.length === 0) {
     return null
   }
 
@@ -66,27 +79,19 @@ export function LegalConsent({
       >
         <span>
           {t('I have read and agree to the')}{' '}
-          {hasUserAgreement && (
-            <a
-              href='/user-agreement'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-primary hover:underline'
-            >
-              {t('User Agreement')}
-            </a>
-          )}
-          {hasUserAgreement && hasPrivacyPolicy && ' and the '}
-          {hasPrivacyPolicy && (
-            <a
-              href='/privacy-policy'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-primary hover:underline'
-            >
-              {t('Privacy Policy')}
-            </a>
-          )}
+          {links.map((link, index) => (
+            <span key={link.href}>
+              {index > 0 && ` ${t('and')} `}
+              <a
+                href={link.href}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-primary hover:underline'
+              >
+                {link.label}
+              </a>
+            </span>
+          ))}
           .
         </span>
       </Label>

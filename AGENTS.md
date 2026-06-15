@@ -143,3 +143,23 @@ When creating a pull request:
 - First compare the current git user (`git config user.name` / `git config user.email`) with the repository's historical core developers (for example, the recurring top authors in `git log`). Do not change git config.
 - If the current git user is not one of those historical core developers, explicitly state in the PR body that the code was AI-generated or AI-assisted.
 - Always use the repository PR template at `.github/PULL_REQUEST_TEMPLATE.md` when drafting the PR title/body. Preserve the template structure and fill in the relevant sections instead of replacing it with an ad hoc format.
+
+### Rule 9: Planning Files — All Future Changes Must Be Recorded First
+
+From now on, all non-trivial changes in this repository MUST be recorded in planning files before implementation.
+
+**Required planning files:**
+- `.agents/planning/task_plan.md`
+- `.agents/planning/findings.md`
+- `.agents/planning/progress.md`
+
+**Execution rules:**
+- Before starting any non-trivial code change, update `task_plan.md` with the goal, current phase, and planned steps.
+- Record new discoveries, constraints, tradeoffs, and blockers in `findings.md`.
+- Record each actual change batch, validation result, and touched files in `progress.md`.
+- After each meaningful implementation step, update the plan status from `pending` → `in_progress` → `complete`.
+- Before final handoff or branch merge, use `git status --short` as the canonical quick check for currently modified files, and synchronize that file list into `progress.md`.
+
+**Collaboration intent:**
+- This rule exists so future branch merges can reconstruct change scope directly from the planning files plus current git status.
+- If `AGENTS.md` and planning files conflict, the stricter requirement applies: update planning files first, then modify code.

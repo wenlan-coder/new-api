@@ -97,7 +97,9 @@ export function SignUpForm({
   const emailVerificationRequired = !!status?.email_verification
   const hasUserAgreement = Boolean(status?.user_agreement_enabled)
   const hasPrivacyPolicy = Boolean(status?.privacy_policy_enabled)
-  const requiresLegalConsent = hasUserAgreement || hasPrivacyPolicy
+  const hasTermsOfService = Boolean(status?.terms_of_service_enabled)
+  const requiresLegalConsent =
+    hasUserAgreement || hasPrivacyPolicy || hasTermsOfService
   const oauthRegisterEnabled =
     status?.oauth_register_enabled ??
     status?.data?.oauth_register_enabled ??

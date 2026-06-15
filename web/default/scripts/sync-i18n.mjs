@@ -21,6 +21,7 @@ import path from 'node:path'
 
 // This script is executed from the web/ package root (see package.json script).
 const LOCALES_DIR = path.resolve('src/i18n/locales')
+const ACTIVE_LOCALES = new Set(['en', 'zh'])
 const FALLBACK_COMPARE_LOCALE = 'en' // used for "still English" detection only
 const OBFUSCATED_KEYS = [
   {
@@ -218,6 +219,7 @@ async function main() {
   const localeFiles = entries
     .filter((e) => e.isFile() && e.name.endsWith('.json'))
     .map((e) => e.name)
+    .filter((name) => ACTIVE_LOCALES.has(name.replace(/\.json$/i, '')))
     .sort((a, b) => a.localeCompare(b))
 
   // Auto-pick base locale as the one with the most leaf keys under translation (most "rich").
@@ -317,4 +319,3 @@ main().catch((err) => {
   console.error(err)
   process.exitCode = 1
 })
-

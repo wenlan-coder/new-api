@@ -39,6 +39,7 @@ export type TopNavLink = {
  *   pricing: { enabled: true, requireAuth: false },
  *   rankings: { enabled: true, requireAuth: false },
  *   docs: true,
+ *   groupMonitor: true,
  *   about: true
  * }
  */
@@ -56,6 +57,9 @@ export function useTopNavLinks(): TopNavLink[] {
 
   // Documentation link (may be external)
   const docsLink: string | undefined = status?.docs_link as string | undefined
+  const groupMonitorLink: string | undefined = status?.group_monitor_link as
+    | string
+    | undefined
 
   const isAuthed = !!auth?.user
 
@@ -83,6 +87,14 @@ export function useTopNavLinks(): TopNavLink[] {
   if (rankings && typeof rankings === 'object' && rankings.enabled) {
     const requiresAuth = rankings.requireAuth && !isAuthed
     links.push({ title: t('Rankings'), href: '/rankings', requiresAuth })
+  }
+
+  if (modules?.groupMonitor !== false && groupMonitorLink) {
+    links.push({
+      title: t('Group Monitor'),
+      href: groupMonitorLink,
+      external: true,
+    })
   }
 
   // Docs (supports external links)

@@ -17,14 +17,38 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { api } from '@/lib/api'
+import i18next from 'i18next'
+import { normalizeInterfaceLanguage } from '@/i18n/languages'
 import type { LegalDocumentResponse } from './types'
 
+function legalDocumentRequestConfig() {
+  return {
+    headers: {
+      'Accept-Language': normalizeInterfaceLanguage(i18next.language),
+    },
+  }
+}
+
 export async function getUserAgreement() {
-  const res = await api.get<LegalDocumentResponse>('/api/user-agreement')
+  const res = await api.get<LegalDocumentResponse>(
+    '/api/user-agreement',
+    legalDocumentRequestConfig()
+  )
   return res.data
 }
 
 export async function getPrivacyPolicy() {
-  const res = await api.get<LegalDocumentResponse>('/api/privacy-policy')
+  const res = await api.get<LegalDocumentResponse>(
+    '/api/privacy-policy',
+    legalDocumentRequestConfig()
+  )
+  return res.data
+}
+
+export async function getTermsOfService() {
+  const res = await api.get<LegalDocumentResponse>(
+    '/api/terms-of-service',
+    legalDocumentRequestConfig()
+  )
   return res.data
 }
