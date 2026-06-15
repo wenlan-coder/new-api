@@ -101,6 +101,7 @@
 - [ ] 提交代码并推送到 GitHub
 - [ ] 创建并推送 Git tag
 - [ ] 构建并推送自定义 Docker 镜像
+- [ ] 增加 GHCR 专用 GitHub Actions 发布流程
 - **状态：** in_progress
 
 ## 关键问题

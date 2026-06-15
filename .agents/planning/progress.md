@@ -414,10 +414,18 @@
   - 将根目录 `VERSION` 写为 `v1.0.0-rc.11-transnova.1`。
   - 执行发布前检查：`bun run i18n:sync`、`bunx tsc -b --pretty false`、`bun run build`、`go test ./setting/system_setting ./controller ./router -run '^$'`、`git diff --check` 均通过。
   - 确认本地和远端均不存在 `v1.0.0-rc.11-transnova.1` tag。
+  - 创建提交 `cad9e8f0 release: prepare transnova v1.0.0-rc.11`。
+  - 成功推送分支 `tokennova` 到 `origin/tokennova`。
+  - 创建本地 tag `v1.0.0-rc.11-transnova.1`。
+  - 推送 tag 到 GitHub 失败：`403`。
+  - 本机 Docker 构建失败：拉取 Docker Hub 基础镜像 metadata 时获取匿名 token 超时。
+  - 确认本机未安装 GitHub CLI，无法直接使用 `gh`。
+  - 检查现有 Docker workflows，发现稳定版 workflow 硬编码官方 Docker Hub 镜像名，alpha workflow 也依赖 Docker Hub secrets。
+  - 新增 GHCR 专用 workflow：`.github/workflows/transnova-docker.yml`，在 `tokennova` 分支 push 或手动触发时构建并推送 `ghcr.io/wenlan-coder/new-api`。
 - 待执行：
-  - 提交并推送当前分支。
-  - 创建并推送 `v1.0.0-rc.11-transnova.1` tag。
-  - 构建并推送 GHCR Docker 镜像。
+  - 提交并推送 GHCR workflow。
+  - 等待 GitHub Actions 云端构建并发布 GHCR 镜像。
+  - 如仓库权限允许，后续再补推 `v1.0.0-rc.11-transnova.1` tag。
 
 ## 当前 git status --short（2026-06-15 发布前检查后）
 - `M .gitignore`

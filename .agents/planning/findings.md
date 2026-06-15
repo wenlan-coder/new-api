@@ -103,6 +103,10 @@
 - GitHub releases API 返回当前官方最新版本为 `v1.0.0-rc.11`。
 - 根目录 `VERSION` 原本为空，导致本地/构建未注入时页面显示默认 `v0.0.0`。
 - 本次自定义发布版本号设为 `v1.0.0-rc.11-transnova.1`，Docker 镜像目标按 origin 推断为 `ghcr.io/wenlan-coder/new-api:v1.0.0-rc.11-transnova.1`。
+- 本机未安装 GitHub CLI：`gh` 不在 PATH 中。
+- 现有 `.github/workflows/docker-build.yml` 硬编码发布到 `calciumion/new-api`，不适合直接用于自定义 GHCR 镜像。
+- 现有 `.github/workflows/docker-image-alpha.yml` 虽然包含 GHCR，但仍登录并发布 Docker Hub 官方镜像，可能依赖 `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN` secrets，也不适合作为本次稳定发布入口。
+- 本机 Docker 构建失败原因是 Docker Hub 匿名 token 获取超时，属于本机网络/Registry 访问问题；可通过 GitHub Actions 云端构建绕开。
 
 ## 遇到的问题
 | 问题 | 解决方案 |
